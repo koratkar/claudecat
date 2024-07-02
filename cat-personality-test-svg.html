@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meow-velous Personality Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #ffecd2);
+        }
+        #container {
+            text-align: center;
+            background: white;
+            padding: 2em;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        button {
+            background-color: #ff9a9e;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #ff7e82;
+        }
+        #catSvg {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Meow-velous Personality Test</h1>
+        <div id="question"></div>
+        <div id="options"></div>
+        <svg id="catSvg" viewBox="0 0 100 100"></svg>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { text: "When you see a cardboard box, you...", options: ["Immediately jump in", "Sniff it cautiously", "Ignore it completely"] },
+            { text: "Your favorite napping spot is...", options: ["On top of the highest furniture", "In a cozy, hidden corner", "Wherever the sun is shining"] },
+            { text: "When it comes to treats, you prefer...", options: ["Crunchy kibbles", "Soft, meaty snacks", "Whatever your human is eating"] },
+            { text: "Your reaction to water is...", options: ["Fascination and playfulness", "Complete avoidance", "Indifference"] },
+            { text: "When meeting new cats, you tend to...", options: ["Hiss and establish dominance", "Hide and observe", "Attempt to make friends"] }
+        ];
+
+        const personalities = [
+            { type: "The Adventurer", description: "You're curious, energetic, and always up for a new experience!" },
+            { type: "The Snuggle Bug", description: "You're affectionate, laid-back, and love nothing more than a good cuddle." },
+            { type: "The Aloof Aristocrat", description: "You're independent, refined, and expect the royal treatment." },
+            { type: "The Playful Prankster", description: "You're mischievous, clever, and always looking for your next fun escapade." },
+            { type: "The Zen Master", description: "You're calm, wise, and prefer peaceful contemplation to chaos." }
+        ];
+
+        let currentQuestion = 0;
+        let answers = [];
+
+        function displayQuestion() {
+            const questionEl = document.getElementById('question');
+            const optionsEl = document.getElementById('options');
+            
+            questionEl.innerHTML = `<h2>${questions[currentQuestion].text}</h2>`;
+            optionsEl.innerHTML = '';
+            
+            questions[currentQuestion].options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                optionsEl.appendChild(button);
+            });
+
+            updateCatSvg();
+        }
+
+        function selectAnswer(index) {
+            answers.push(index);
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            const resultEl = document.getElementById('result');
+            const personalityIndex = Math.floor(Math.random() * personalities.length);
+            const personality = personalities[personalityIndex];
+            
+            resultEl.innerHTML = `
+                <h2>Your Cat Personality is:</h2>
+                <h3>${personality.type}</h3>
+                <p>${personality.description}</p>
+                <button onclick="resetTest()">Take the test again</button>
+            `;
+
+            document.getElementById('question').innerHTML = '';
+            document.getElementById('options').innerHTML = '';
+        }
+
+        function resetTest() {
+            currentQuestion = 0;
+            answers = [];
+            document.getElementById('result').innerHTML = '';
+            displayQuestion();
+        }
+
+        function updateCatSvg() {
+            const svg = document.getElementById('catSvg');
+            const progress = (currentQuestion + 1) / questions.length;
+            
+            svg.innerHTML = `
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#ddd" stroke-width="10" />
+                <path d="M50 50 L50 5 A45 45 0 ${progress > 0.5 ? 1 : 0} 1 ${50 + 45 * Math.sin(progress * 2 * Math.PI)} ${50 - 45 * Math.cos(progress * 2 * Math.PI)} Z" fill="#ff9a9e" />
+                <circle cx="50" cy="50" r="40" fill="white" />
+                <circle cx="35" cy="40" r="5" fill="#333" />
+                <circle cx="65" cy="40" r="5" fill="#333" />
+                <path d="M40 60 Q50 70 60 60" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round" />
+                <path d="M25 30 Q35 25 30 15" fill="none" stroke="#333" stroke-width="2" />
+                <path d="M75 30 Q65 25 70 15" fill="none" stroke="#333" stroke-width="2" />
+            `;
+        }
+
+        displayQuestion();
+    </script>
+</body>
+</html>
